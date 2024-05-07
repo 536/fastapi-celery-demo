@@ -1,0 +1,24 @@
+services:
+  mysql:
+    image: mysql:8.4
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/data/:/var/lib/mysql/
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - TZ
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?}
+    restart: always
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis/redis.conf:/redis.conf
+      - ./redis/data/:/data/
+    environment:
+      - TZ
+      - REDIS_PASSWORD=${REDIS_PASSWORD:?}
+    command: redis-server /redis.conf --requirepass ${REDIS_PASSWORD}
+    restart: always

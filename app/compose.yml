@@ -1,0 +1,25 @@
+include:
+  - ../database/compose.yml
+
+services:
+  backend:
+    image: python:3.11-alpine
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    environment:
+      - TZ
+    command: /bin/sh -c "pip install -r requirements.txt && fastapi run main.py --root-path /api/v1"
+    restart: always
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    environment:
+      - TZ
+    depends_on:
+      - backend
+    restart: always
